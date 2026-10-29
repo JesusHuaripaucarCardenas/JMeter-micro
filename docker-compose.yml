@@ -1,0 +1,26 @@
+version: '3.8'
+
+# La conexión a la BD y las URLs de los microservicios tienen su valor por
+# defecto en application.yml; aquí solo se sobreescribe lo que cambie en el
+# despliegue (DB_R2DBC_URL, DB_USERNAME, DB_PASSWORD, SERVICES_*_URL).
+services:
+  vg-ms-sigrc-medical-history:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: jesushuaripaucarcardenas/ms-medical-history:latest
+    container_name: vg-ms-sigrc-medical-history
+    pull_policy: always
+    mem_limit: 250m
+    cpus: "0.5"
+    restart: unless-stopped
+    ports:
+      - "9091:9091"
+    environment:
+      SERVER_PORT: 9091
+    networks:
+      - sigrc-network
+
+networks:
+  sigrc-network:
+    external: true

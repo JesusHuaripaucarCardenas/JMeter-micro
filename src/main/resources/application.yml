@@ -1,0 +1,57 @@
+server:
+  port: ${SERVER_PORT:9091}
+
+spring:
+  application:
+    name: ms-medical-history
+
+  # R2DBC - Conexión reactiva con Supabase PostgreSQL (pooler), mismo "appdb"
+  # que ms-notifications. El esquema se administra a mano (sin migraciones).
+  r2dbc:
+    url: ${DB_R2DBC_URL:r2dbcs:postgresql://aws-0-us-west-2.pooler.supabase.com:6543/postgres?sslMode=require&preparedStatementCacheQueries=0}
+    username: ${DB_USERNAME:postgres.wlmvybkehzussggqwgma}
+    password: ${DB_PASSWORD:Angelo#2026.22}
+    pool:
+      initial-size: 1
+      max-size: 5
+      max-idle-time: 5m
+      max-life-time: 30m
+      validation-query: SELECT 1
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:https://lab.vallegrande.edu.pe/sigrc/keycloak/realms/PRS04}
+
+# ── Microservicios externos ────────────────────────────────────────────────────
+services:
+  patients:
+    url: ${SERVICES_PATIENTS_URL:https://lab.vallegrande.edu.pe/sigrc/gateway/api/v1/patients}
+  # (cambio) vg-ms-doctors fue retirado; los doctores viven en vg-ms-users y
+  # su especialidad se resuelve vía el área que tengan asignada.
+  users:
+    url: ${SERVICES_USERS_URL:https://lab.vallegrande.edu.pe/sigrc/gateway/api/v1/users}
+  areas:
+    url: ${SERVICES_AREAS_URL:https://lab.vallegrande.edu.pe/sigrc/gateway/api/v1/areas}
+  appointments:
+    url: ${SERVICES_APPOINTMENTS_URL:https://lab.vallegrande.edu.pe/sigrc/gateway/api/v1/appointments}
+  specialties:
+    url: ${SERVICES_SPECIALTIES_URL:https://lab.vallegrande.edu.pe/sigrc/gateway/api/v1/specialties}
+  medications:
+    url: ${SERVICES_MEDICATIONS_URL:https://lab.vallegrande.edu.pe/sigrc/gateway/api/v1/medications}
+
+logging:
+  level:
+    pe.edu.vallegrande.sigrc.medicalhistory: INFO
+    io.r2dbc.postgresql: INFO
+    org.springframework.data.r2dbc: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always

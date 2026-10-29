@@ -1,0 +1,12 @@
+# Perfil de desarrollo local: se activa con SPRING_PROFILES_ACTIVE=dev.
+# Solo sobreescribe lo que cambia frente a application.yml.
+
+logging:
+  level:
+    pe.edu.vallegrande.sigrc.medicalhistory: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,env,loggers

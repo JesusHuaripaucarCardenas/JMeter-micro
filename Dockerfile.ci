@@ -1,0 +1,16 @@
+# Imagen del pipeline: el JAR ya viene compilado y probado del job test, así
+# que no se vuelve a bajar Maven ni las dependencias. El contexto del build es
+# target/ (ver .gitlab-ci.yml). Para construir en local se usa el Dockerfile.
+FROM gcr.io/distroless/java17-debian12
+
+WORKDIR /app
+
+COPY *.jar app.jar
+
+ENV JAVA_TOOL_OPTIONS="-XX:MaxRAMPercentage=75 \
+-Djava.security.egd=file:/dev/./urandom \
+-XX:+ExitOnOutOfMemoryError"
+
+EXPOSE 9091
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

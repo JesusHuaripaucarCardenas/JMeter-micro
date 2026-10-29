@@ -1,0 +1,202 @@
+{
+  "info": {
+    "name": "vg-ms-medical-history",
+    "description": "Microservicio de historias clínicas de SisCáritas / SIGRC. Todas las rutas exigen un JWT de Keycloak (realm PRS04); el servicio resuelve rol y organización desde el token.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{accessToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://lab.vallegrande.edu.pe/sigrc/gateway",
+      "description": "El servicio se consume por el gateway, igual que lo hace el frontend"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "description": "JWT del usuario autenticado"
+    },
+    {
+      "key": "organizationId",
+      "value": "org-test-1",
+      "description": "ID de la organización / tenant"
+    },
+    {
+      "key": "historyId",
+      "value": "",
+      "description": "ID de la historia clínica"
+    },
+    {
+      "key": "patientId",
+      "value": "",
+      "description": "ID del paciente"
+    }
+  ],
+  "item": [
+    {
+      "name": "Historias Clínicas",
+      "item": [
+        {
+          "name": "Listar historias visibles al médico",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Organization-Id",
+                "value": "{{organizationId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/medical-histories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "medical-histories"]
+            }
+          }
+        },
+        {
+          "name": "Buscar historia por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Organization-Id",
+                "value": "{{organizationId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/medical-histories/{{historyId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "medical-histories", "{{historyId}}"]
+            }
+          }
+        },
+        {
+          "name": "Crear historia clínica",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Organization-Id",
+                "value": "{{organizationId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": \"patient-1\",\n  \"appointmentId\": \"apt-1\",\n  \"reasonForVisit\": \"Control de rutina\",\n  \"diagnosis\": \"Paciente sano\",\n  \"notes\": \"Sin observaciones\",\n  \"medications\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/medical-histories",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "medical-histories"]
+            }
+          }
+        },
+        {
+          "name": "Actualizar historia clínica",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reasonForVisit\": \"Control actualizado\",\n  \"diagnosis\": \"Evolución favorable\",\n  \"notes\": \"Tratamiento completado\",\n  \"medications\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/medical-histories/{{historyId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "medical-histories", "{{historyId}}"]
+            }
+          }
+        },
+        {
+          "name": "Desactivar historia clínica",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/medical-histories/{{historyId}}/deactivate",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "medical-histories", "{{historyId}}", "deactivate"]
+            }
+          }
+        },
+        {
+          "name": "Restaurar historia clínica",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/medical-histories/{{historyId}}/restore",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "medical-histories", "{{historyId}}", "restore"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Expediente del Paciente (Encounters)",
+      "item": [
+        {
+          "name": "Listar atenciones del paciente",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-Organization-Id",
+                "value": "{{organizationId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patient-medical-records/{{patientId}}/encounters",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "patient-medical-records", "{{patientId}}", "encounters"]
+            }
+          }
+        },
+        {
+          "name": "Crear atención directa en expediente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Organization-Id",
+                "value": "{{organizationId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"patientId\": \"{{patientId}}\",\n  \"reasonForVisit\": \"Consulta directa\",\n  \"diagnosis\": \"Cefalea tensional\",\n  \"notes\": \"Descanso médico 2 días\",\n  \"medications\": []\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/patient-medical-records/{{patientId}}/encounters",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "patient-medical-records", "{{patientId}}", "encounters"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

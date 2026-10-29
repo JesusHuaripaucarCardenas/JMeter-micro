@@ -1,0 +1,17 @@
+# Perfil de producción: se activa con SPRING_PROFILES_ACTIVE=prod.
+# Las credenciales y URLs llegan por variables de entorno (ver docker-compose.yml);
+# aquí solo quedan los valores que endurecen el servicio.
+
+logging:
+  level:
+    root: WARN
+    pe.edu.vallegrande.sigrc.medicalhistory: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
